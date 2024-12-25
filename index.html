@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Árbol de Navidad Mejorado</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+            position: relative;
+            background: #001d3d; /* Fondo oscuro */
+        }
+
+        /* Luces navideñas con efecto de parpadeo */
+        .lights {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255, 0, 0, 0.7), rgba(0, 255, 0, 0.7), rgba(0, 0, 255, 0.7));
+            animation: lightsAnimation 1.5s ease-in-out infinite alternate;
+            opacity: 0.6;
+            z-index: 0;
+        }
+
+        @keyframes lightsAnimation {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+
+        .tree-container {
+            position: relative;
+            width: 250px;
+            text-align: center;
+            z-index: 2;
+        }
+
+        /* Estrella en la punta */
+        .star {
+            font-size: 60px;
+            color: gold;
+            text-shadow: 0 0 20px gold, 0 0 40px yellow, 0 0 60px orange;
+            cursor: pointer;
+            position: absolute;
+            top: -70px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 5;
+            transition: transform 4s ease, text-shadow 4s ease;
+        }
+
+        /* Ramas del árbol */
+        .branch {
+            font-size: 40px;
+            line-height: 1.5;
+            color: green;
+            text-shadow: 0 0 10px lime, 0 0 20px greenyellow, 0 0 30px lightgreen;
+        }
+
+        /* Regalos */
+        .gifts {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .gift {
+            width: 50px;
+            height: 50px;
+            margin: 10px;
+            background: linear-gradient(45deg, red, gold);
+            border: 3px solid white;
+            border-radius: 5px;
+            position: relative;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+            z-index: 4;
+        }
+
+        .gift::before, .gift::after {
+            content: "";
+            position: absolute;
+            background: white;
+        }
+
+        .gift::before {
+            width: 100%;
+            height: 6px;
+            top: 50%;
+            left: 0;
+            transform: translateY(-50%);
+        }
+
+        .gift::after {
+            height: 100%;
+            width: 6px;
+            left: 50%;
+            top: 0;
+            transform: translateX(-50%);
+        }
+
+        /* Carta emergente */
+        .letter {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgb(255, 253, 225);
+            padding: 30px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            display: none;
+            animation: fadeIn 1s ease forwards;
+            max-height: 70vh;
+            overflow-y: scroll;
+            z-index: 10;
+            width: 60%;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -60%);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        /* Barra de desplazamiento de la carta */
+        .letter::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .letter::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+
+        .letter::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* Botón de cerrar */
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #ff6347;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background-color: #ff4500;
+        }
+
+        /* Copos de nieve */
+        .snowflake {
+            position: absolute;
+            top: -10%;
+            font-size: 40px;
+            color: white;
+            opacity: 0.8;
+            animation: fall 10s linear infinite, blinkSnow 3s infinite alternate;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(110vh) rotate(360deg); }
+        }
+
+        @keyframes blinkSnow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .snowflake:nth-child(odd) { animation-duration: 8s; animation-delay: calc(var(--index) * 0.5s); }
+        .snowflake:nth-child(even) { animation-duration: 12s; animation-delay: calc(var(--index) * 0.3s); }
+
+        /* Estilo para la imagen emergente del regalo */
+        .gift-image {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            max-width: 80%;
+            max-height: 80%;
+            z-index: 15;
+            display: none;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="lights"></div> <!-- Luces navideñas con efectos de parpadeo -->
+    
+    <div class="tree-container">
+        <div class="star" onclick="animateStar()">★</div>
+        <div class="branch">🎄</div>
+        <div class="branch">🎄🎄</div>
+        <div class="branch">🎄🎄🎄</div>
+        <div class="branch">🎄🎄🎄🎄</div>
+        <div class="branch">🎄🎄🎄🎄🎄</div>
+        <div class="gifts">
+            <div class="gift" onclick="showImage('imagenes/foto1.png')"></div>
+            <div class="gift" onclick="showImage('imagenes/foto2.png')"></div>
+            <div class="gift" onclick="showImage('imagenes/foto3.png')"></div>
+        </div>
+    </div>
+
+    <!-- Copos de nieve -->
+    <div class="snowflake" style="left: 5%; --index: 1;">❄</div>
+    <div class="snowflake" style="left: 10%; --index: 2;">❅</div>
+    <div class="snowflake" style="left: 18%; --index: 3;">❆</div>
+    <div class="snowflake" style="left: 25%; --index: 4;">❄</div>
+    <div class="snowflake" style="left: 33%; --index: 5;">❅</div>
+    <div class="snowflake" style="left: 40%; --index: 6;">❆</div>
+    <div class="snowflake" style="left: 50%; --index: 7;">❄</div>
+    <div class="snowflake" style="left: 65%; --index: 8;">❅</div>
+    <div class="snowflake" style="left: 73%; --index: 9;">❆</div>
+    <div class="snowflake" style="left: 82%; --index: 10;">❄</div>
+    <div class="snowflake" style="left: 90%; --index: 11;">❅</div>
+    <div class="snowflake" style="left: 95%; --index: 12;">❆</div>
+
+    <!-- Carta emergente -->
+    <div class="letter" id="letter">
+        <button class="close-btn" onclick="closeLetter()">X</button>
+        🎁 ¡Feliz Navidad Andrea! 🎁 <br> Primero decirte muchas gracias por el saludo y perdón por demorar tanto quería hacerte un detalle así desde antes, pero ando ocupado con actividades y muchas cosas en la cabeza que solo me hacen pensar, recuerdo tu consejo, pero aun así me afecta. El hecho que me saludaras realmente me hizo muy feliz y de paso es el único saludo que tengo, que triste no? Jaja. En segundo lugar, no digas que tu amistad no significó nada para mi eres como mi apoyo Andrea, estas conmigo en mi peor momento enserio, pero ahora estoy en un punto donde es mejor estar sin nadie alrededor y al estar en ese silencio talvez pueda escucharme a mi mismo para poder mejorar ya que estar contigo me haces tan feliz que me hace sentir que las cosas están bien así de feliz me haces ya que siempre tenías un juego nuevo o una actividad si no sabía de qué hablar me preguntabas de que tal me fue o si ya comí y poco a poco me adapte a ti, pero cuando no estas se siente triste o las cosas no van bien es un sentimiento extraño. Lo pensé mucho el hecho de alejarme de ti, me sentí triste. En tercer lugar, la ultima semana y bueno en especial el sábado cuando estaba en la playa aparte de pensar en mis asuntos llegue al punto donde me di cuenta que siento interés por ti y no sé si es el punto que me gustes dejé de pensar en eso ya que recordando lo que me dijo la pitonisa pues llegue a la conclusión que debo zanjar mis problemas, mis miedos e inseguridades para poder avanzar como persona (ya te conté sobre cada punto de eso) y también poner iniciar una relación. Ya se que en este punto me vas a rechazar como te gusta alguien y no quieres tener algo a distancia pues normal no? (ayer rechacé una empresa de cableado en Arequipa ><) y realmente quisiera volver a jugar contigo hasta ahora tengo esas ganas terminar de ver las cosas que quedamos en ver, pero ya pasará en su momento. No te digo que volveremos a juntarnos pero como te dije una vez: por más que se separen el destino los volverá a unir. Hay muchas cosas para hablar, pero lo dejaré ahí mucho testamento. Hasta otra oportunidad señorita Andrea c:
+    </div>
+
+    <!-- Imagen emergente del regalo -->
+    <img id="giftImage" class="gift-image" src="" alt="Imagen del regalo">
+
+    <script>
+        let currentPriority = 10;  // El valor inicial de la prioridad (la carta)
+
+        function animateStar() {
+            const star = document.querySelector('.star');
+            const letter = document.getElementById('letter');
+
+            // Inicialización de la estrella antes de la animación
+            star.style.transition = 'transform 4s ease, text-shadow 4s ease';
+            star.style.transform = 'translate(-50%, -50%) scale(3)'; // Se mueve al centro de la pantalla
+            star.style.textShadow = '0 0 100px gold, 0 0 150px yellow, 0 0 200px orange'; // Brillo aumentado
+
+            // Después de 4 segundos, la carta aparece
+            setTimeout(() => {
+                letter.style.display = 'block'; // Muestra la carta
+                letter.style.zIndex = `${currentPriority++}`; // Asegura que la carta esté encima
+            }, 4000);
+        }
+
+        function closeLetter() {
+            const letter = document.getElementById('letter');
+            letter.style.display = 'none';  // Oculta la carta
+        }
+
+        function showImage(imageUrl) {
+            const giftImage = document.getElementById('giftImage');
+            giftImage.src = imageUrl;
+            giftImage.style.display = 'block'; // Muestra la imagen al hacer clic en el regalo
+            giftImage.style.zIndex = `${currentPriority++}`; // Asegura que la imagen esté encima del árbol pero debajo de la carta
+
+            // Traer al frente el regalo que fue clickeado
+            const clickedGift = event.target;
+            clickedGift.style.zIndex = `${currentPriority++}`; // Asegura que el regalo esté al frente
+
+            // Cierra la imagen al hacer clic
+            giftImage.onclick = () => {
+                giftImage.style.display = 'none';
+            };
+        }
+    </script>
+</body>
+</html>
